@@ -58,14 +58,57 @@ public final class VirtualObject: SCNReferenceNode {
         }
         super.init(url: modelURL)!
         self.load()
+        
+        setupPivot()
+        setupShadows()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    // MARK: - setup pivot
+    private func setupPivot(){
+        self.pivot = SCNMatrix4MakeTranslation(
+            0,
+            self.boundingBox.min.y,
+            0
+        )
+    }
     
-    private func addShadowPlane() {
+    // MARK: - shadow settings
+    private func setupShadows() {
+        let light = SCNLight()
+        light.type = .directional
+        light.shadowColor = UIColor.black.withAlphaComponent(0.5)
+        light.shadowRadius = 5
+        light.shadowSampleCount = 5
+        light.castsShadow = true
+        light.shadowMode = .forward
         
+        let lightNode = SCNNode()
+        lightNode.light = light
+        lightNode.eulerAngles = SCNVector3(x: -.pi/2, y: 0, z: 0)
+        self.addChildNode(lightNode)
+        
+        let value1: CGFloat = CGFloat(self.boundingBox.max.x - self.boundingBox.min.x)
+        let value2: CGFloat = CGFloat(self.boundingBox.max.z - self.boundingBox.min.z)
+        let value3: CGFloat = CGFloat(self.boundingBox.max.z - self.boundingBox.min.x)
+        let value4: CGFloat = CGFloat(self.boundingBox.max.x - self.boundingBox.min.z)
+        
+        let min = minOne([value1, value2, value3, value4])
+        let edge = sqrt(min*min*2)
+        let plane = SCNPlane(width: edge, height: edge)
+        plane.firstMaterial?.lightingModel = .shadowOnly
+        
+        let planeNode = SCNNode(geometry: plane)
+        let x = self.boundingBox.min.x + (self.boundingBox.max.x - self.boundingBox.min.x)/2
+        let y = self.boundingBox.min.y
+        let z = self.boundingBox.min.z + (self.boundingBox.max.z - self.boundingBox.min.z)/2
+        planeNode.position = SCNVector3(x: x,
+                                        y: y,
+                                        z: z)
+        planeNode.eulerAngles.x = -.pi/2
+        self.addChildNode(planeNode)
     }
 }
 
@@ -80,5 +123,12 @@ public extension VirtualObject {
         guard let parent = node.parent else { return nil }
         
         return existingObjectContainingNode(parent)
+    }
+    
+    func minOne<T:Comparable>( _ seq:[T]) -> T{
+        assert(seq.count>0)
+        return seq.reduce(seq[0]){
+            min($0, $1)
+        }
     }
 }

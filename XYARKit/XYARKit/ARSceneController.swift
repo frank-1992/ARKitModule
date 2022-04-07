@@ -37,28 +37,15 @@ public final class ARSceneController: UIViewController {
     /// the latest screen touch position when a pan gesture is active
     private var lastPanTouchPosition: CGPoint?
     
-    ///  about shadow
-    private var shadowPlane: SCNNode?
-    private var lightNode:SCNNode?
-    
     private lazy var light: SCNLight = {
         let light = SCNLight()
         light.type = .directional
-        light.shadowColor = UIColor.black.withAlphaComponent(0.5)
-        light.shadowRadius = 5
-        light.shadowSampleCount = 5
-        light.castsShadow = true
-        light.shadowCascadeCount = 3
-        light.shadowCascadeSplittingFactor = 0.09
-        light.shadowBias = 0.1
-        light.categoryBitMask = -1
-        light.shadowMode = .deferred
         return light
     }()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        loadVirtualObject(with: "万得虎-firework")
+        loadVirtualObject(with: "boxing+")
         setupSceneView()
         setupCoachingOverlay()
     }
@@ -96,7 +83,7 @@ public final class ARSceneController: UIViewController {
         view.addSubview(sceneView)
         
         // light for scene
-        addLight()
+//        addLight()
         
         // tap to place object
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showVirtualObject(_:)))
@@ -104,40 +91,13 @@ public final class ARSceneController: UIViewController {
     }
     
     // MARK: - add light to scene
-    private func addLight() {
-        if lightNode != nil {
-            lightNode?.removeFromParentNode()
-            lightNode = nil
-        }
-
-        let lightNode = SCNNode()
-        lightNode.light = light
-        lightNode.eulerAngles = SCNVector3(x: -.pi/3, y: 0, z: 0)
-        sceneView.scene.rootNode.addChildNode(lightNode)
-    }
-    
-    private func addShadowPlane(with loaction: CGPoint) {
-        if shadowPlane != nil {
-            shadowPlane?.removeFromParentNode()
-            shadowPlane = nil
-        }
-        
-        let floor = SCNFloor()
-        floor.reflectivity = 0
-        let material = SCNMaterial()
-        material.diffuse.contents = UIColor.white
-        
-        // https://stackoverflow.com/questions/30975695/scenekit-is-it-possible-to-cast-an-shadow-on-an-transparent-object/44799498#44799498
-        material.colorBufferWriteMask = SCNColorMask(rawValue: 0)
-        floor.materials = [material]
-        
-        guard let newPlaneData = anyPlaneFrom(location: loaction) else { return }
-        let floorNode = SCNNode(geometry: floor)
-        floorNode.position = newPlaneData.1
-        sceneView.scene.rootNode.addChildNode(floorNode)
-        shadowPlane = floorNode
-    }
-    
+//    private func addLight() {
+//        let lightNode = SCNNode()
+//        lightNode.light = light
+//        lightNode.position = SCNVector3(0, 1, 0)
+//        lightNode.eulerAngles = SCNVector3(x: -.pi/3.0, y: 0, z: 0)
+//        sceneView.scene.rootNode.addChildNode(lightNode)
+//    }
     
     private func anyPlaneFrom(location: CGPoint) -> (SCNNode, SCNVector3)? {
         let results = sceneView.hitTest(location,
@@ -173,19 +133,12 @@ public final class ARSceneController: UIViewController {
                 }
             }
         }
-        addShadowPlane(with: touchLocation)
     }
     
     // MARK: - 放置模型
     func place(_ object: SCNNode, basedOn location: CGPoint) {
         guard let hitTestResult = sceneView.smartHitTest(location)
             else { return }
-        object.pivot = SCNMatrix4MakeTranslation(
-            0,
-            object.boundingBox.min.y+2,
-            0
-        )
-        
         sceneView.scene.rootNode.addChildNode(object)
         object.scale = SCNVector3(0.01, 0.01, 0.01)
         object.simdWorldPosition =  hitTestResult.worldTransform.translation
@@ -270,40 +223,9 @@ extension ARSceneController: ARSCNViewDelegate {
         if planeAnchor.alignment == .horizontal {
             canPlaceObject = true
         }
-        
-//        let width = CGFloat(planeAnchor.extent.x)
-//        let height = CGFloat(planeAnchor.extent.z)
-//        let plane = SCNPlane(width: width, height: height)
-//        plane.materials.first?.writesToDepthBuffer = true
-//        plane.materials.first?.readsFromDepthBuffer = true
-//        plane.firstMaterial?.lightingModel = .shadowOnly
-//
-//        let planeNode = SCNNode(geometry: plane)
-//        let x = planeAnchor.center.x
-//        let y = planeAnchor.center.y
-//        let z = planeAnchor.center.z
-//        planeNode.position = SCNVector3(x: x, y: y, z: z)
-//        planeNode.eulerAngles.x = -.pi/2
-//        planeNode.castsShadow = false
-//        node.addChildNode(planeNode)
     }
     
     public func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
-        
-        // update plane
-//        guard let planeNode = node.childNodes.first,
-//              let plane = planeNode.geometry as? SCNPlane else {
-//            return
-//        }
-//        let width = CGFloat(planeAnchor.extent.x)
-//        let height = CGFloat(planeAnchor.extent.z)
-//        plane.width = width
-//        plane.height = height
-//        let x = planeAnchor.center.x
-//        let y = planeAnchor.center.y
-//        let z = planeAnchor.center.z
-//        planeNode.position = SCNVector3(x: x, y: y, z: z)
     }
 }
 
