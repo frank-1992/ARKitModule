@@ -45,7 +45,7 @@ public final class ARSceneController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        loadVirtualObject(with: "boxing+")
+        loadVirtualObject(with: "万得虎-firework")
         setupSceneView()
         setupCoachingOverlay()
     }
@@ -83,7 +83,7 @@ public final class ARSceneController: UIViewController {
         view.addSubview(sceneView)
         
         // light for scene
-//        addLight()
+        addLight()
         
         // tap to place object
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showVirtualObject(_:)))
@@ -91,13 +91,20 @@ public final class ARSceneController: UIViewController {
     }
     
     // MARK: - add light to scene
-//    private func addLight() {
-//        let lightNode = SCNNode()
-//        lightNode.light = light
-//        lightNode.position = SCNVector3(0, 1, 0)
-//        lightNode.eulerAngles = SCNVector3(x: -.pi/3.0, y: 0, z: 0)
-//        sceneView.scene.rootNode.addChildNode(lightNode)
-//    }
+    private func addLight() {
+        let light = SCNLight()
+        light.type = .directional
+        light.shadowColor = UIColor.black.withAlphaComponent(0.5)
+        light.shadowRadius = 5
+        light.shadowSampleCount = 5
+        light.castsShadow = true
+        light.shadowMode = .forward
+
+        let lightNode = SCNNode()
+        lightNode.light = light
+        lightNode.eulerAngles = SCNVector3(x: -.pi/2, y: 0, z: 0)
+        sceneView.scene.rootNode.addChildNode(lightNode)
+    }
     
     private func anyPlaneFrom(location: CGPoint) -> (SCNNode, SCNVector3)? {
         let results = sceneView.hitTest(location,

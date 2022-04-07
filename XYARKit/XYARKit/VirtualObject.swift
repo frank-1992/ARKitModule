@@ -76,20 +76,7 @@ public final class VirtualObject: SCNReferenceNode {
     }
     
     // MARK: - shadow settings
-    private func setupShadows() {
-        let light = SCNLight()
-        light.type = .directional
-        light.shadowColor = UIColor.black.withAlphaComponent(0.5)
-        light.shadowRadius = 5
-        light.shadowSampleCount = 5
-        light.castsShadow = true
-        light.shadowMode = .forward
-        
-        let lightNode = SCNNode()
-        lightNode.light = light
-        lightNode.eulerAngles = SCNVector3(x: -.pi/2, y: 0, z: 0)
-        self.addChildNode(lightNode)
-        
+    private func setupShadows() {        
         let value1: CGFloat = CGFloat(self.boundingBox.max.x - self.boundingBox.min.x)
         let value2: CGFloat = CGFloat(self.boundingBox.max.z - self.boundingBox.min.z)
         let value3: CGFloat = CGFloat(self.boundingBox.max.z - self.boundingBox.min.x)
@@ -98,6 +85,7 @@ public final class VirtualObject: SCNReferenceNode {
         let min = minOne([value1, value2, value3, value4])
         let edge = sqrt(min*min*2)
         let plane = SCNPlane(width: edge, height: edge)
+        plane.firstMaterial?.diffuse.contents = UIColor.white
         plane.firstMaterial?.lightingModel = .shadowOnly
         
         let planeNode = SCNNode(geometry: plane)
