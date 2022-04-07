@@ -7,15 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		208AC177FF4E452B2541B1A5 /* Pods_XYARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76F6159B01402D02CC1769B0 /* Pods_XYARKit.framework */; };
 		CE09EF4327FD9D370096104E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF4227FD9D370096104E /* AppDelegate.swift */; };
 		CE09EF4527FD9D370096104E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF4427FD9D370096104E /* SceneDelegate.swift */; };
 		CE09EF4727FD9D370096104E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF4627FD9D370096104E /* ViewController.swift */; };
 		CE09EF4A27FD9D370096104E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE09EF4827FD9D370096104E /* Main.storyboard */; };
 		CE09EF4C27FD9D390096104E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE09EF4B27FD9D390096104E /* Assets.xcassets */; };
 		CE09EF4F27FD9D390096104E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE09EF4D27FD9D390096104E /* LaunchScreen.storyboard */; };
+		CE09EF5827FDA3480096104E /* ARSceneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF5727FDA3480096104E /* ARSceneController.swift */; };
+		CE09EF5A27FDA36E0096104E /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF5927FDA36E0096104E /* ARView.swift */; };
+		CE09EF5C27FDA3850096104E /* VirtualObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF5B27FDA3850096104E /* VirtualObject.swift */; };
+		CE09EF6027FDB6040096104E /* ARUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF5F27FDB6040096104E /* ARUtilities.swift */; };
+		CE09EF6227FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF6127FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift */; };
+		CE09EF6427FE8F4A0096104E /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = CE09EF6327FE8F4A0096104E /* Models.scnassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		76F6159B01402D02CC1769B0 /* Pods_XYARKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_XYARKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE09EF3F27FD9D370096104E /* XYARKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XYARKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE09EF4227FD9D370096104E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE09EF4427FD9D370096104E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -24,6 +32,14 @@
 		CE09EF4B27FD9D390096104E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CE09EF4E27FD9D390096104E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CE09EF5027FD9D390096104E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE09EF5727FDA3480096104E /* ARSceneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ARSceneController.swift; path = /Users/user/SourceCode/ARKitModule/XYARKit/XYARKit/ARSceneController.swift; sourceTree = "<absolute>"; };
+		CE09EF5927FDA36E0096104E /* ARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
+		CE09EF5B27FDA3850096104E /* VirtualObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualObject.swift; sourceTree = "<group>"; };
+		CE09EF5F27FDB6040096104E /* ARUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARUtilities.swift; sourceTree = "<group>"; };
+		CE09EF6127FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARSceneController+ARCoachingOverlay.swift"; sourceTree = "<group>"; };
+		CE09EF6327FE8F4A0096104E /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
+		EA535740EF28CAAE92F7E37C /* Pods-XYARKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XYARKit.debug.xcconfig"; path = "Target Support Files/Pods-XYARKit/Pods-XYARKit.debug.xcconfig"; sourceTree = "<group>"; };
+		F8EED016DC3EC7B55B7EFD81 /* Pods-XYARKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XYARKit.release.xcconfig"; path = "Target Support Files/Pods-XYARKit/Pods-XYARKit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,17 +47,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				208AC177FF4E452B2541B1A5 /* Pods_XYARKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		072A25AD15473859C544C346 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				EA535740EF28CAAE92F7E37C /* Pods-XYARKit.debug.xcconfig */,
+				F8EED016DC3EC7B55B7EFD81 /* Pods-XYARKit.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		B5F366A41BDB9C25841E2240 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				76F6159B01402D02CC1769B0 /* Pods_XYARKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		CE09EF3627FD9D370096104E = {
 			isa = PBXGroup;
 			children = (
 				CE09EF4127FD9D370096104E /* XYARKit */,
 				CE09EF4027FD9D370096104E /* Products */,
+				072A25AD15473859C544C346 /* Pods */,
+				B5F366A41BDB9C25841E2240 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -59,6 +95,12 @@
 				CE09EF4227FD9D370096104E /* AppDelegate.swift */,
 				CE09EF4427FD9D370096104E /* SceneDelegate.swift */,
 				CE09EF4627FD9D370096104E /* ViewController.swift */,
+				CE09EF5727FDA3480096104E /* ARSceneController.swift */,
+				CE09EF5927FDA36E0096104E /* ARView.swift */,
+				CE09EF6127FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift */,
+				CE09EF5B27FDA3850096104E /* VirtualObject.swift */,
+				CE09EF5F27FDB6040096104E /* ARUtilities.swift */,
+				CE09EF6327FE8F4A0096104E /* Models.scnassets */,
 				CE09EF4827FD9D370096104E /* Main.storyboard */,
 				CE09EF4B27FD9D390096104E /* Assets.xcassets */,
 				CE09EF4D27FD9D390096104E /* LaunchScreen.storyboard */,
@@ -74,9 +116,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CE09EF5327FD9D390096104E /* Build configuration list for PBXNativeTarget "XYARKit" */;
 			buildPhases = (
+				2A4AFD376852218F542367DC /* [CP] Check Pods Manifest.lock */,
 				CE09EF3B27FD9D370096104E /* Sources */,
 				CE09EF3C27FD9D370096104E /* Frameworks */,
 				CE09EF3D27FD9D370096104E /* Resources */,
+				6B517A4D81CD49204EFE276B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -126,6 +170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE09EF4F27FD9D390096104E /* LaunchScreen.storyboard in Resources */,
+				CE09EF6427FE8F4A0096104E /* Models.scnassets in Resources */,
 				CE09EF4C27FD9D390096104E /* Assets.xcassets in Resources */,
 				CE09EF4A27FD9D370096104E /* Main.storyboard in Resources */,
 			);
@@ -133,14 +178,61 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2A4AFD376852218F542367DC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-XYARKit-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6B517A4D81CD49204EFE276B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-XYARKit/Pods-XYARKit-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-XYARKit/Pods-XYARKit-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-XYARKit/Pods-XYARKit-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		CE09EF3B27FD9D370096104E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE09EF5A27FDA36E0096104E /* ARView.swift in Sources */,
 				CE09EF4727FD9D370096104E /* ViewController.swift in Sources */,
+				CE09EF6027FDB6040096104E /* ARUtilities.swift in Sources */,
+				CE09EF5C27FDA3850096104E /* VirtualObject.swift in Sources */,
 				CE09EF4327FD9D370096104E /* AppDelegate.swift in Sources */,
 				CE09EF4527FD9D370096104E /* SceneDelegate.swift in Sources */,
+				CE09EF6227FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift in Sources */,
+				CE09EF5827FDA3480096104E /* ARSceneController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,11 +374,13 @@
 		};
 		CE09EF5427FD9D390096104E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EA535740EF28CAAE92F7E37C /* Pods-XYARKit.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = M3W2F8BN4Y;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XYARKit/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -294,6 +388,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -309,11 +404,13 @@
 		};
 		CE09EF5527FD9D390096104E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F8EED016DC3EC7B55B7EFD81 /* Pods-XYARKit.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = M3W2F8BN4Y;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XYARKit/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -321,6 +418,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
