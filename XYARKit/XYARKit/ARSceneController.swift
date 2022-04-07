@@ -121,34 +121,28 @@ public final class ARSceneController: UIViewController {
     private func showVirtualObject(_ gesture: UITapGestureRecognizer) {
         guard canPlaceObject else { return }
         let touchLocation = gesture.location(in: sceneView)
+        guard let hitTestResult = sceneView.smartHitTest(touchLocation) else { return }
+
         if let object = placedObject {
-            if let hitTestResult = sceneView.smartHitTest(touchLocation) {
-                object.simdPosition = hitTestResult.worldTransform.translation
-            }
+            object.simdPosition = hitTestResult.worldTransform.translation
         } else {
             // add virtual object
             guard let virtualObject = loadedVirtualObject else {
                 return
             }
-            place(virtualObject, basedOn: touchLocation)
+            print(virtualObject)
+            sceneView.scene.rootNode.addChildNode(virtualObject)
+            virtualObject.scale = SCNVector3(0.01, 0.01, 0.01)
+            virtualObject.simdWorldPosition =  hitTestResult.worldTransform.translation
             placedObject = virtualObject
-            virtualObject.shouldUpdateAnchor = true
-            if virtualObject.shouldUpdateAnchor {
-                virtualObject.shouldUpdateAnchor = false
-                self.updateQueue.async {
-                    self.sceneView.addOrUpdateAnchor(for: self.loadedVirtualObject!)
-                }
-            }
+//            virtualObject.shouldUpdateAnchor = true
+//            if virtualObject.shouldUpdateAnchor {
+//                virtualObject.shouldUpdateAnchor = false
+//                self.updateQueue.async {
+//                    self.sceneView.addOrUpdateAnchor(for: self.loadedVirtualObject!)
+//                }
+//            }
         }
-    }
-    
-    // MARK: - 放置模型
-    func place(_ object: SCNNode, basedOn location: CGPoint) {
-        guard let hitTestResult = sceneView.smartHitTest(location)
-            else { return }
-        sceneView.scene.rootNode.addChildNode(object)
-        object.scale = SCNVector3(0.01, 0.01, 0.01)
-        object.simdWorldPosition =  hitTestResult.worldTransform.translation
     }
     
     // MARK: - add gestures
