@@ -7,6 +7,5 @@ target 'XYARKit' do
 
   # Pods for XYARKit
   pod 'SnapKit'
-  pod 'XYCamera', '1.0.37.binary'
-
+  pod 'ARVideoKit'
 end

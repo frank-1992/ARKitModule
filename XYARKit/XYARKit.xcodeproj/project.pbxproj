@@ -20,6 +20,7 @@
 		CE09EF6027FDB6040096104E /* ARUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF5F27FDB6040096104E /* ARUtilities.swift */; };
 		CE09EF6227FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF6127FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift */; };
 		CE09EF6427FE8F4A0096104E /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = CE09EF6327FE8F4A0096104E /* Models.scnassets */; };
+		CE09EF8A280015BA0096104E /* ARSceneController+RecordAR.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF89280015BA0096104E /* ARSceneController+RecordAR.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		CE09EF5F27FDB6040096104E /* ARUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARUtilities.swift; sourceTree = "<group>"; };
 		CE09EF6127FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARSceneController+ARCoachingOverlay.swift"; sourceTree = "<group>"; };
 		CE09EF6327FE8F4A0096104E /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
+		CE09EF89280015BA0096104E /* ARSceneController+RecordAR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARSceneController+RecordAR.swift"; sourceTree = "<group>"; };
 		EA535740EF28CAAE92F7E37C /* Pods-XYARKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XYARKit.debug.xcconfig"; path = "Target Support Files/Pods-XYARKit/Pods-XYARKit.debug.xcconfig"; sourceTree = "<group>"; };
 		F8EED016DC3EC7B55B7EFD81 /* Pods-XYARKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XYARKit.release.xcconfig"; path = "Target Support Files/Pods-XYARKit/Pods-XYARKit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -96,6 +98,7 @@
 				CE09EF4427FD9D370096104E /* SceneDelegate.swift */,
 				CE09EF4627FD9D370096104E /* ViewController.swift */,
 				CE09EF5727FDA3480096104E /* ARSceneController.swift */,
+				CE09EF89280015BA0096104E /* ARSceneController+RecordAR.swift */,
 				CE09EF5927FDA36E0096104E /* ARView.swift */,
 				CE09EF6127FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift */,
 				CE09EF5B27FDA3850096104E /* VirtualObject.swift */,
@@ -231,6 +234,7 @@
 				CE09EF5C27FDA3850096104E /* VirtualObject.swift in Sources */,
 				CE09EF4327FD9D370096104E /* AppDelegate.swift in Sources */,
 				CE09EF4527FD9D370096104E /* SceneDelegate.swift in Sources */,
+				CE09EF8A280015BA0096104E /* ARSceneController+RecordAR.swift in Sources */,
 				CE09EF6227FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift in Sources */,
 				CE09EF5827FDA3480096104E /* ARSceneController.swift in Sources */,
 			);

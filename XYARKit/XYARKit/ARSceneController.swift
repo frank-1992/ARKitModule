@@ -8,6 +8,7 @@
 import UIKit
 import SceneKit
 import ARKit
+import ARVideoKit
 
 public final class ARSceneController: UIViewController {
 
@@ -37,6 +38,22 @@ public final class ARSceneController: UIViewController {
     /// the latest screen touch position when a pan gesture is active
     private var lastPanTouchPosition: CGPoint?
     
+    ///  video record
+    var recorder: RecordAR?
+    let recordingQueue = DispatchQueue(label: "recordingThread", attributes: .concurrent)
+    let caprturingQueue = DispatchQueue(label: "capturingThread", attributes: .concurrent)
+    
+    private lazy var startRecordButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Start", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor.systemBlue
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.layer.cornerRadius = 40
+        button.addTarget(self, action: #selector(recordingAction(_:)), for: .touchUpInside)
+        return button
+    }()
+    
     private lazy var light: SCNLight = {
         let light = SCNLight()
         light.type = .directional
@@ -48,6 +65,7 @@ public final class ARSceneController: UIViewController {
         loadVirtualObject(with: "万得虎-firework")
         setupSceneView()
         setupCoachingOverlay()
+        setupARRecord()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -58,6 +76,13 @@ public final class ARSceneController: UIViewController {
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         sceneView.session.pause()
+        
+        if recorder?.status == .recording {
+            recorder?.stopAndExport()
+        }
+        recorder?.onlyRenderWhileRecording = true
+        recorder?.prepare(ARWorldTrackingConfiguration())
+        recorder?.rest()
     }
     
     func resetTracking() {
@@ -68,6 +93,8 @@ public final class ARSceneController: UIViewController {
             configuration.environmentTexturing = .automatic
         }
         session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+        
+        recorder?.prepare(configuration)
     }
     
     // MARK: - loadVirtualObject
@@ -88,6 +115,14 @@ public final class ARSceneController: UIViewController {
         // tap to place object
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showVirtualObject(_:)))
         sceneView.addGestureRecognizer(tapGesture)
+        
+        // add record buttons
+        view.addSubview(startRecordButton)
+        startRecordButton.snp.makeConstraints { make in
+            make.centerX.equalTo(view)
+            make.bottom.equalTo(view).offset(-100)
+            make.size.equalTo(CGSize(width: 80, height: 80))
+        }
     }
     
     // MARK: - add light to scene

@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/user/SourceCode/ARKitModule/XYARKit/XYARKit/ARSceneController.swift">
-   </FileRef>
-   <FileRef
       location = "group:XYARKit.xcodeproj">
    </FileRef>
    <FileRef
