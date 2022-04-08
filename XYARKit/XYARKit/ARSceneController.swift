@@ -100,10 +100,11 @@ public final class ARSceneController: UIViewController {
         light.castsShadow = true
         light.shadowMode = .forward
 
-        let lightNode = SCNNode()
-        lightNode.light = light
-        lightNode.eulerAngles = SCNVector3(x: -.pi/2, y: 0, z: 0)
-        sceneView.scene.rootNode.addChildNode(lightNode)
+        let shadowLightNode = SCNNode()
+        shadowLightNode.light = light
+        /// - Tag: 此处取值为2的话会出现plane闪烁的问题,需要灯光有一定的斜角
+        shadowLightNode.eulerAngles = SCNVector3(x: -.pi/2.01, y: 0, z: 0)
+        sceneView.scene.rootNode.addChildNode(shadowLightNode)
     }
     
     private func anyPlaneFrom(location: CGPoint) -> (SCNNode, SCNVector3)? {

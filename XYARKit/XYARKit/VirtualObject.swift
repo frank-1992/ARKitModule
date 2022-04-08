@@ -85,7 +85,7 @@ public final class VirtualObject: SCNReferenceNode {
         let min = minOne([value1, value2, value3, value4])
         let edge = sqrt(min*min*2)
         let plane = SCNPlane(width: edge, height: edge)
-        plane.firstMaterial?.diffuse.contents = UIColor.white
+        plane.firstMaterial?.diffuse.contents = UIColor.red
         plane.firstMaterial?.lightingModel = .shadowOnly
         
         let planeNode = SCNNode(geometry: plane)
