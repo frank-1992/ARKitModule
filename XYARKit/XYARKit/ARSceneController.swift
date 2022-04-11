@@ -10,6 +10,20 @@ import SceneKit
 import ARKit
 import ARVideoKit
 
+
+public struct FixValue {
+    // set loaded object's scale
+    static let originObjectScale: Float = 0.01
+    // solve the problem of plane flickering, the tilt angle is required
+    static let lightNodeAngleFix: Float = 0.01
+    // single pan gesture rotation sensitivity
+    static let objectRotationFix: CGFloat = 100.0
+    // correction of initial display model position relative to camera position Y
+    static let cameraTranslationYFix: Float = 1.0
+    // correction of initial display model position relative to camera position Z
+    static let cameraTranslationZFix: Float = 2.0
+}
+
 public final class ARSceneController: UIViewController {
 
     public lazy var sceneView: ARView = {
@@ -34,6 +48,8 @@ public final class ARSceneController: UIViewController {
     
     /// the flag about place object
     private var canPlaceObject: Bool = false
+    
+    private var placedObjectOnPlane: Bool = false
     
     /// the latest screen touch position when a pan gesture is active
     private var lastPanTouchPosition: CGPoint?
@@ -64,6 +80,7 @@ public final class ARSceneController: UIViewController {
         super.viewDidLoad()
         loadVirtualObject(with: "万得虎-firework")
         setupSceneView()
+        displayVirtualObject()
         setupCoachingOverlay()
         setupARRecord()
     }
@@ -125,6 +142,18 @@ public final class ARSceneController: UIViewController {
         }
     }
     
+    // MARK: - display virtual object
+    private func displayVirtualObject() {
+        guard let virtualObject = loadedVirtualObject else {
+            return
+        }
+        sceneView.scene.rootNode.addChildNode(virtualObject)
+        virtualObject.scale = SCNVector3(FixValue.originObjectScale, FixValue.originObjectScale, FixValue.originObjectScale)
+        virtualObject.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
+        placedObject = virtualObject
+    }
+    
+    
     // MARK: - add light to scene
     private func addLight() {
         let light = SCNLight()
@@ -138,7 +167,7 @@ public final class ARSceneController: UIViewController {
         let shadowLightNode = SCNNode()
         shadowLightNode.light = light
         /// - Tag: 此处取值为2的话会出现plane闪烁的问题,需要灯光有一定的斜角
-        shadowLightNode.eulerAngles = SCNVector3(x: -.pi/2.01, y: 0, z: 0)
+        shadowLightNode.eulerAngles = SCNVector3(x: -.pi/(2 + FixValue.lightNodeAngleFix), y: 0, z: 0)
         sceneView.scene.rootNode.addChildNode(shadowLightNode)
     }
     
@@ -168,7 +197,7 @@ public final class ARSceneController: UIViewController {
             }
             print(virtualObject)
             sceneView.scene.rootNode.addChildNode(virtualObject)
-            virtualObject.scale = SCNVector3(0.01, 0.01, 0.01)
+            virtualObject.scale = SCNVector3(FixValue.originObjectScale, FixValue.originObjectScale, FixValue.originObjectScale)
             virtualObject.simdWorldPosition =  hitTestResult.worldTransform.translation
             placedObject = virtualObject
 //            virtualObject.shouldUpdateAnchor = true
@@ -214,7 +243,7 @@ public final class ARSceneController: UIViewController {
             } else {
                 // rotate
                 let translation = gesture.translation(in: sceneView)
-                placedObject?.objectRotation += Float(translation.x/100)
+                placedObject?.objectRotation += Float(translation.x/FixValue.objectRotationFix)
                 gesture.setTranslation(.zero, in: sceneView)
             }
         default:
@@ -260,6 +289,16 @@ extension ARSceneController: ARSCNViewDelegate {
         if planeAnchor.alignment == .horizontal {
             canPlaceObject = true
         }
+        
+        DispatchQueue.main.async {
+            guard let placeObject = self.placedObject, self.placedObjectOnPlane == false else { return }
+            let touchLocation = self.sceneView.screenCenter
+            guard let hitTestResult = self.sceneView.smartHitTest(touchLocation) else { return }
+            placeObject.simdWorldPosition = hitTestResult.worldTransform.translation
+            self.placedObjectOnPlane = true
+        }
+        
+        
     }
     
     public func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
@@ -289,7 +328,10 @@ extension ARSceneController: ARSessionDelegate {
     }
     
     public func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        
+        // load then show the model right away
+        let transform = frame.camera.transform
+        guard let placeObject = self.placedObject, self.placedObjectOnPlane == false else { return }
+        placeObject.simdWorldPosition = simd_float3(x: transform.translation.x, y: transform.translation.y - FixValue.cameraTranslationYFix, z: -FixValue.cameraTranslationZFix)
     }
     
     public func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
