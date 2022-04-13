@@ -8,8 +8,6 @@
 import UIKit
 import SceneKit
 import ARKit
-import ARVideoKit
-
 
 public struct FixValue {
     // set loaded object's scale
@@ -54,11 +52,6 @@ public final class ARSceneController: UIViewController {
     /// the latest screen touch position when a pan gesture is active
     private var lastPanTouchPosition: CGPoint?
     
-    ///  video record
-    var recorder: RecordAR?
-    let recordingQueue = DispatchQueue(label: "recordingThread", attributes: .concurrent)
-    let caprturingQueue = DispatchQueue(label: "capturingThread", attributes: .concurrent)
-    
     private lazy var startRecordButton: UIButton = {
         let button = UIButton()
         button.setTitle("Start", for: .normal)
@@ -66,7 +59,7 @@ public final class ARSceneController: UIViewController {
         button.backgroundColor = UIColor.systemBlue
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.layer.cornerRadius = 40
-        button.addTarget(self, action: #selector(recordingAction(_:)), for: .touchUpInside)
+//        button.addTarget(self, action: #selector(recordingAction(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -82,7 +75,6 @@ public final class ARSceneController: UIViewController {
         setupSceneView()
         displayVirtualObject()
         setupCoachingOverlay()
-        setupARRecord()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -93,13 +85,6 @@ public final class ARSceneController: UIViewController {
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         sceneView.session.pause()
-        
-        if recorder?.status == .recording {
-            recorder?.stopAndExport()
-        }
-        recorder?.onlyRenderWhileRecording = true
-        recorder?.prepare(ARWorldTrackingConfiguration())
-        recorder?.rest()
     }
     
     func resetTracking() {
@@ -109,9 +94,19 @@ public final class ARSceneController: UIViewController {
         if #available(iOS 12.0, *) {
             configuration.environmentTexturing = .automatic
         }
+       
+        // add people occlusion
+        // WARNING: - CPU High
+        guard ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) else {
+            fatalError("People occlusion is not supported on this device.")
+        }
+        switch configuration.frameSemantics {
+        case [.personSegmentationWithDepth]:
+            configuration.frameSemantics.remove(.personSegmentationWithDepth)
+        default:
+            configuration.frameSemantics.insert(.personSegmentationWithDepth)
+        }
         session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-        
-        recorder?.prepare(configuration)
     }
     
     // MARK: - loadVirtualObject
@@ -200,6 +195,7 @@ public final class ARSceneController: UIViewController {
             virtualObject.scale = SCNVector3(FixValue.originObjectScale, FixValue.originObjectScale, FixValue.originObjectScale)
             virtualObject.simdWorldPosition =  hitTestResult.worldTransform.translation
             placedObject = virtualObject
+            
 //            virtualObject.shouldUpdateAnchor = true
 //            if virtualObject.shouldUpdateAnchor {
 //                virtualObject.shouldUpdateAnchor = false
@@ -290,15 +286,13 @@ extension ARSceneController: ARSCNViewDelegate {
             canPlaceObject = true
         }
         
-        DispatchQueue.main.async {
-            guard let placeObject = self.placedObject, self.placedObjectOnPlane == false else { return }
-            let touchLocation = self.sceneView.screenCenter
-            guard let hitTestResult = self.sceneView.smartHitTest(touchLocation) else { return }
-            placeObject.simdWorldPosition = hitTestResult.worldTransform.translation
-            self.placedObjectOnPlane = true
-        }
-        
-        
+//        DispatchQueue.global().async {
+//            guard let placeObject = self.placedObject, self.placedObjectOnPlane == false else { return }
+//            let touchLocation = self.sceneView.screenCenter
+//            guard let hitTestResult = self.sceneView.smartHitTest(touchLocation) else { return }
+//            placeObject.simdWorldPosition = hitTestResult.worldTransform.translation
+//            self.placedObjectOnPlane = true
+//        }
     }
     
     public func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
@@ -329,9 +323,9 @@ extension ARSceneController: ARSessionDelegate {
     
     public func session(_ session: ARSession, didUpdate frame: ARFrame) {
         // load then show the model right away
-        let transform = frame.camera.transform
-        guard let placeObject = self.placedObject, self.placedObjectOnPlane == false else { return }
-        placeObject.simdWorldPosition = simd_float3(x: transform.translation.x, y: transform.translation.y - FixValue.cameraTranslationYFix, z: -FixValue.cameraTranslationZFix)
+//        let transform = frame.camera.transform
+//        guard let placeObject = self.placedObject, self.placedObjectOnPlane == false else { return }
+//        placeObject.simdWorldPosition = simd_float3(x: transform.translation.x, y: transform.translation.y - FixValue.cameraTranslationYFix, z: -FixValue.cameraTranslationZFix)
     }
     
     public func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
