@@ -8,6 +8,8 @@
 import UIKit
 import SceneKit
 import ARKit
+import SCNRecorder
+import AVKit
 
 public struct FixValue {
     // set loaded object's scale
@@ -59,8 +61,21 @@ public final class ARSceneController: UIViewController {
         button.backgroundColor = UIColor.systemBlue
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.layer.cornerRadius = 40
-//        button.addTarget(self, action: #selector(recordingAction(_:)), for: .touchUpInside)
+        button.tag = 100
+        button.addTarget(self, action: #selector(recordingAction(_:)), for: .touchUpInside)
         return button
+    }()
+    
+    public lazy var timeLabel: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = .black.withAlphaComponent(0.5)
+        label.layer.cornerRadius = 6
+        label.layer.masksToBounds = true
+        label.textColor = UIColor.white
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textAlignment = .center
+        label.text = "00:00"
+        return label
     }()
     
     private lazy var light: SCNLight = {
@@ -73,7 +88,7 @@ public final class ARSceneController: UIViewController {
         super.viewDidLoad()
         loadVirtualObject(with: "万得虎-firework")
         setupSceneView()
-        displayVirtualObject()
+//        displayVirtualObject()
         setupCoachingOverlay()
     }
     
@@ -132,8 +147,25 @@ public final class ARSceneController: UIViewController {
         view.addSubview(startRecordButton)
         startRecordButton.snp.makeConstraints { make in
             make.centerX.equalTo(view)
-            make.bottom.equalTo(view).offset(-100)
+            make.bottom.equalTo(view).offset(-50)
             make.size.equalTo(CGSize(width: 80, height: 80))
+        }
+        
+        // about video record
+        setupARRecord()
+        
+        // show record time
+        showRecordTime()
+    }
+    
+    // MARK: - record time
+    func showRecordTime() {
+        view.addSubview(timeLabel)
+        timeLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(startRecordButton.snp.top).offset(-6)
+            make.centerX.equalTo(startRecordButton)
+            make.width.equalTo(60)
+            make.height.equalTo(30)
         }
     }
     
@@ -153,7 +185,7 @@ public final class ARSceneController: UIViewController {
     private func addLight() {
         let light = SCNLight()
         light.type = .directional
-        light.shadowColor = UIColor.black.withAlphaComponent(0.5)
+        light.shadowColor = UIColor.black.withAlphaComponent(0.2)
         light.shadowRadius = 5
         light.shadowSampleCount = 5
         light.castsShadow = true
