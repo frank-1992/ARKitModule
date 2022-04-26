@@ -31,7 +31,7 @@ class ViewController: UIViewController {
         
         enterButton.snp.makeConstraints { make in
             make.center.equalTo(view)
-            make.size.equalTo(CGSize(width: 100, height: 30))
+            make.size.equalTo(CGSize(width: 150, height: 60))
         }
     }
     

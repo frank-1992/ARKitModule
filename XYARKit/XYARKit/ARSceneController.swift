@@ -1,6 +1,6 @@
 //
 //  ARSceneController.swift
-//  
+//
 //
 //  Created by user on 4/6/22.
 //
@@ -10,8 +10,9 @@ import SceneKit
 import ARKit
 import SCNRecorder
 import AVKit
+import Photos
 
-public struct FixValue {
+public enum FixValue {
     // set loaded object's scale
     static let originObjectScale: Float = 0.01
     // solve the problem of plane flickering, the tilt angle is required
@@ -23,9 +24,9 @@ public struct FixValue {
     // correction of initial display model position relative to camera position Z
     static let cameraTranslationZFix: Float = 2.0
 }
-
+@available(iOS 13.0, *)
 public final class ARSceneController: UIViewController {
-
+    
     public lazy var sceneView: ARView = {
         let sceneView = ARView(frame: view.bounds)
         sceneView.delegate = self
@@ -45,6 +46,7 @@ public final class ARSceneController: UIViewController {
     /// about virtual object
     private var loadedVirtualObject: VirtualObject?
     private var placedObject: VirtualObject?
+    private var verticalShadowPlaneNode: SCNNode?
     
     /// the flag about place object
     private var canPlaceObject: Bool = false
@@ -63,6 +65,7 @@ public final class ARSceneController: UIViewController {
         button.layer.cornerRadius = 40
         button.tag = 100
         button.addTarget(self, action: #selector(recordingAction(_:)), for: .touchUpInside)
+//        button.addTarget(self, action: #selector(takePhotoAction(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -78,18 +81,19 @@ public final class ARSceneController: UIViewController {
         return label
     }()
     
-    private lazy var light: SCNLight = {
-        let light = SCNLight()
-        light.type = .directional
-        return light
+    // about assets (photo, video)
+    public var featchResult = PHFetchResult<PHAsset>()
+
+    public lazy var imageManager: PHCachingImageManager = {
+        let imageManager = PHCachingImageManager()
+        return imageManager
     }()
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        loadVirtualObject(with: "万得虎-firework")
         setupSceneView()
-//        displayVirtualObject()
-        setupCoachingOverlay()
+//        setupCoachingOverlay()
+        loadVirtualObject(with: "万得虎-firework")
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -102,13 +106,11 @@ public final class ARSceneController: UIViewController {
         sceneView.session.pause()
     }
     
-    func resetTracking() {
+    private func resetTracking() {
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = [.horizontal, .vertical]
         configuration.isLightEstimationEnabled = true
-        if #available(iOS 12.0, *) {
-            configuration.environmentTexturing = .automatic
-        }
+        configuration.environmentTexturing = .automatic
        
         // add people occlusion
         // WARNING: - CPU High
@@ -130,14 +132,13 @@ public final class ARSceneController: UIViewController {
         self.loadedVirtualObject = virtualObject
         print("模型加载成功")
         addGestures()
+        displayVirtualObject()
     }
     
     // MARK: - setup ARSceneView
     private func setupSceneView() {
+        view.backgroundColor = .white
         view.addSubview(sceneView)
-        
-        // light for scene
-        addLight()
         
         // tap to place object
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showVirtualObject(_:)))
@@ -153,7 +154,7 @@ public final class ARSceneController: UIViewController {
         
         // about video record
         setupARRecord()
-        
+
         // show record time
         showRecordTime()
     }
@@ -176,65 +177,51 @@ public final class ARSceneController: UIViewController {
         }
         sceneView.scene.rootNode.addChildNode(virtualObject)
         virtualObject.scale = SCNVector3(FixValue.originObjectScale, FixValue.originObjectScale, FixValue.originObjectScale)
-        virtualObject.simdWorldPosition = simd_float3(x: 0, y: 0, z: 0)
+        virtualObject.simdWorldPosition = simd_float3(x: 0, y: -1, z: -2)
         placedObject = virtualObject
-    }
-    
-    
-    // MARK: - add light to scene
-    private func addLight() {
-        let light = SCNLight()
-        light.type = .directional
-        light.shadowColor = UIColor.black.withAlphaComponent(0.2)
-        light.shadowRadius = 5
-        light.shadowSampleCount = 5
-        light.castsShadow = true
-        light.shadowMode = .forward
-
-        let shadowLightNode = SCNNode()
-        shadowLightNode.light = light
-        /// - Tag: 此处取值为2的话会出现plane闪烁的问题,需要灯光有一定的斜角
-        shadowLightNode.eulerAngles = SCNVector3(x: -.pi/(2 + FixValue.lightNodeAngleFix), y: 0, z: 0)
-        sceneView.scene.rootNode.addChildNode(shadowLightNode)
-    }
-    
-    private func anyPlaneFrom(location: CGPoint) -> (SCNNode, SCNVector3)? {
-        let results = sceneView.hitTest(location,
-                                        types: ARHitTestResult.ResultType.existingPlaneUsingExtent)
-        
-        guard results.count > 0,
-              let anchor = results[0].anchor,
-              let node = sceneView.node(for: anchor) else { return nil }
-        
-        return (node, SCNVector3.positionFromTransform(results[0].worldTransform))
     }
     
     @objc
     private func showVirtualObject(_ gesture: UITapGestureRecognizer) {
         guard canPlaceObject else { return }
         let touchLocation = gesture.location(in: sceneView)
-        guard let hitTestResult = sceneView.smartHitTest(touchLocation) else { return }
-
+        guard let hitTestResult = sceneView.smartHitTest(touchLocation),
+              let planeAnchor = hitTestResult.anchor as? ARPlaneAnchor  else { return }
+        setupShadows(with: planeAnchor.alignment)
         if let object = placedObject {
+            /// reset rotation
+            object.rotation.w = 0
+            /// set position
             object.simdPosition = hitTestResult.worldTransform.translation
+            /// set orientation
+            object.simdOrientation = hitTestResult.worldTransform.orientation
+            /// rotate the orientation for vertical plane, make the model looks normal
+            if planeAnchor.alignment == .vertical {
+                let orientation = object.orientation
+                var glQuaternion = GLKQuaternionMake(orientation.x, orientation.y, orientation.z, orientation.w)
+                let multiplier = GLKQuaternionMakeWithAngleAndAxis(-.pi/2, 1, 0, 0)
+                glQuaternion = GLKQuaternionMultiply(glQuaternion, multiplier)
+
+                object.orientation = SCNQuaternion(x: glQuaternion.x, y: glQuaternion.y, z: glQuaternion.z, w: glQuaternion.w)
+            }
         } else {
             // add virtual object
             guard let virtualObject = loadedVirtualObject else {
                 return
             }
-            print(virtualObject)
+            
             sceneView.scene.rootNode.addChildNode(virtualObject)
             virtualObject.scale = SCNVector3(FixValue.originObjectScale, FixValue.originObjectScale, FixValue.originObjectScale)
-            virtualObject.simdWorldPosition =  hitTestResult.worldTransform.translation
+            virtualObject.simdWorldPosition = hitTestResult.worldTransform.translation
             placedObject = virtualObject
             
-//            virtualObject.shouldUpdateAnchor = true
-//            if virtualObject.shouldUpdateAnchor {
-//                virtualObject.shouldUpdateAnchor = false
-//                self.updateQueue.async {
-//                    self.sceneView.addOrUpdateAnchor(for: self.loadedVirtualObject!)
-//                }
-//            }
+            virtualObject.shouldUpdateAnchor = true
+            if virtualObject.shouldUpdateAnchor {
+                virtualObject.shouldUpdateAnchor = false
+                self.updateQueue.async {
+                    self.sceneView.addOrUpdateAnchor(for: virtualObject)
+                }
+            }
         }
     }
     
@@ -242,12 +229,10 @@ public final class ARSceneController: UIViewController {
     private func addGestures() {
         // pan and rotate
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
-        panGesture.delegate = self
         sceneView.addGestureRecognizer(panGesture)
         
         // scale
         let scaleGesture = UIPinchGestureRecognizer(target: self, action: #selector(didScale(_:)))
-        scaleGesture.delegate = self
         sceneView.addGestureRecognizer(scaleGesture)
     }
     
@@ -262,8 +247,20 @@ public final class ARSceneController: UIViewController {
                 let previousPosition = lastPanTouchPosition ?? CGPoint(sceneView.projectPoint(object.position))
                 // calculate the new touch position
                 let currentPosition = CGPoint(x: previousPosition.x + translation.x, y: previousPosition.y + translation.y)
-                if let hitTestResult = sceneView.smartHitTest(currentPosition) {
+                if let hitTestResult = sceneView.smartHitTest(currentPosition),
+                   let planeAnchor = hitTestResult.anchor as? ARPlaneAnchor {
+                    
+                    setupShadows(with: planeAnchor.alignment)
+
                     object.simdPosition = hitTestResult.worldTransform.translation
+                    
+                    object.shouldUpdateAnchor = true
+                    if object.shouldUpdateAnchor {
+                        object.shouldUpdateAnchor = false
+                        self.updateQueue.async {
+                            self.sceneView.addOrUpdateAnchor(for: object)
+                        }
+                    }
                 }
                 lastPanTouchPosition = currentPosition
                 // reset the gesture's translation
@@ -271,7 +268,29 @@ public final class ARSceneController: UIViewController {
             } else {
                 // rotate
                 let translation = gesture.translation(in: sceneView)
-                placedObject?.objectRotation += Float(translation.x/FixValue.objectRotationFix)
+                guard let placedObject = placedObject else {
+                    return
+                }
+                
+                if placedObject.currentPlaneAlignment == .horizontal {
+                    placedObject.rotation = SCNVector4(x: 0, y: 1, z: 0, w: placedObject.rotation.w + Float(translation.x / FixValue.objectRotationFix))
+                } else {
+                    // vertical rotate
+                    let orientation = placedObject.orientation
+                    var glQuaternion = GLKQuaternionMake(orientation.x, orientation.y, orientation.z, orientation.w)
+                    let multiplier = GLKQuaternionMakeWithAngleAndAxis(Float(translation.x / FixValue.objectRotationFix), 0, 0, 1)
+                    glQuaternion = GLKQuaternionMultiply(glQuaternion, multiplier)
+
+                    placedObject.orientation = SCNQuaternion(x: glQuaternion.x, y: glQuaternion.y, z: glQuaternion.z, w: glQuaternion.w)
+                }
+                
+                placedObject.shouldUpdateAnchor = true
+                if placedObject.shouldUpdateAnchor {
+                    placedObject.shouldUpdateAnchor = false
+                    self.updateQueue.async {
+                        self.sceneView.addOrUpdateAnchor(for: placedObject)
+                    }
+                }
                 gesture.setTranslation(.zero, in: sceneView)
             }
         default:
@@ -282,8 +301,9 @@ public final class ARSceneController: UIViewController {
     
     @objc
     func didScale(_ gesture: UIPinchGestureRecognizer) {
-        guard let object = placedObject, gesture.state == .changed
-            else { return }
+        guard let object = placedObject, gesture.state == .changed else {
+            return
+        }
         let newScale = object.simdScale * Float(gesture.scale)
         object.simdScale = newScale
         gesture.scale = 1.0
@@ -303,12 +323,32 @@ public final class ARSceneController: UIViewController {
         }
         return nil
     }
+    
+    private func setupShadows(with alignment: ARPlaneAnchor.Alignment) {
+        if alignment == .horizontal {
+            placedObject?.currentPlaneAlignment = .horizontal
+        } else {
+            placedObject?.currentPlaneAlignment = .vertical
+        }
+    }
 }
 
+@available(iOS 13.0, *)
 // MARK: - ARSCNViewDelegate
 extension ARSceneController: ARSCNViewDelegate {
     public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        
+//        guard let placeObject = placedObject, let pointOfView = sceneView.pointOfView else { return }
+//        if let virtualNode = renderer.nodesInsideFrustum(of: pointOfView).first {
+//            if placeObject.simdWorldPosition == virtualNode.simdWorldPosition {
+//                print("找到")
+//
+//            } else {
+//
+//
+//            }
+//        } else {
+//
+//        }
     }
     
     public func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
@@ -318,20 +358,25 @@ extension ARSceneController: ARSCNViewDelegate {
             canPlaceObject = true
         }
         
-//        DispatchQueue.global().async {
-//            guard let placeObject = self.placedObject, self.placedObjectOnPlane == false else { return }
-//            let touchLocation = self.sceneView.screenCenter
-//            guard let hitTestResult = self.sceneView.smartHitTest(touchLocation) else { return }
-//            placeObject.simdWorldPosition = hitTestResult.worldTransform.translation
-//            self.placedObjectOnPlane = true
-//        }
+        DispatchQueue.main.async {
+            guard let placeObject = self.placedObject, self.placedObjectOnPlane == false else { return }
+            let touchLocation = self.sceneView.screenCenter
+            guard let hitTestResult = self.sceneView.smartHitTest(touchLocation) else { return }
+            placeObject.simdWorldPosition = hitTestResult.worldTransform.translation
+            self.placedObjectOnPlane = true
+            
+            // the object's location (whether horizontal plane or vertical plane)
+            self.setupShadows(with: planeAnchor.alignment)
+        }
     }
     
     public func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        
     }
 }
 
 // MARK: - ARSessionDelegate
+@available(iOS 13.0, *)
 extension ARSceneController: ARSessionDelegate {
     public func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
         switch camera.trackingState {
@@ -354,10 +399,6 @@ extension ARSceneController: ARSessionDelegate {
     }
     
     public func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        // load then show the model right away
-//        let transform = frame.camera.transform
-//        guard let placeObject = self.placedObject, self.placedObjectOnPlane == false else { return }
-//        placeObject.simdWorldPosition = simd_float3(x: transform.translation.x, y: transform.translation.y - FixValue.cameraTranslationYFix, z: -FixValue.cameraTranslationZFix)
     }
     
     public func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
@@ -370,19 +411,10 @@ extension ARSceneController: ARSessionDelegate {
     
     public func sessionWasInterrupted(_ session: ARSession) {
         // Hide content before going into the background.
-        
     }
     
     public func sessionShouldAttemptRelocalization(_ session: ARSession) -> Bool {
         return true
     }
-    
 }
 
-// MARK: - UIGestureRecognizerDelegate
-extension ARSceneController: UIGestureRecognizerDelegate {
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        // allow objects to be translated and rotated at the same time
-        return true
-    }
-}
