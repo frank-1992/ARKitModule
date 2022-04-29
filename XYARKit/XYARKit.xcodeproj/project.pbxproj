@@ -20,6 +20,10 @@
 		CE09EF6027FDB6040096104E /* ARUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF5F27FDB6040096104E /* ARUtilities.swift */; };
 		CE09EF6227FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE09EF6127FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift */; };
 		CE09EF6427FE8F4A0096104E /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = CE09EF6327FE8F4A0096104E /* Models.scnassets */; };
+		CEAA6A4B281B8F1B0044B31C /* CameraButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA6A4A281B8F1A0044B31C /* CameraButtonView.swift */; };
+		CEAA6A4D281B913C0044B31C /* ARResultController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA6A4C281B913C0044B31C /* ARResultController.swift */; };
+		CEAA85D5281BA6790044B31C /* ARUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAA85D4281BA6790044B31C /* ARUtil.swift */; };
+		CEAA85D9281BC4680044B31C /* XYARModule.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CEAA85D8281BC4680044B31C /* XYARModule.bundle */; };
 		CEE38FA128068A3D00BAA8A1 /* ARSceneController+RecordAR.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE38FA028068A3D00BAA8A1 /* ARSceneController+RecordAR.swift */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +43,10 @@
 		CE09EF5F27FDB6040096104E /* ARUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARUtilities.swift; sourceTree = "<group>"; };
 		CE09EF6127FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARSceneController+ARCoachingOverlay.swift"; sourceTree = "<group>"; };
 		CE09EF6327FE8F4A0096104E /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
+		CEAA6A4A281B8F1A0044B31C /* CameraButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraButtonView.swift; sourceTree = "<group>"; };
+		CEAA6A4C281B913C0044B31C /* ARResultController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARResultController.swift; sourceTree = "<group>"; };
+		CEAA85D4281BA6790044B31C /* ARUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARUtil.swift; sourceTree = "<group>"; };
+		CEAA85D8281BC4680044B31C /* XYARModule.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = XYARModule.bundle; sourceTree = "<group>"; };
 		CEE38FA028068A3D00BAA8A1 /* ARSceneController+RecordAR.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ARSceneController+RecordAR.swift"; sourceTree = "<group>"; };
 		EA535740EF28CAAE92F7E37C /* Pods-XYARKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XYARKit.debug.xcconfig"; path = "Target Support Files/Pods-XYARKit/Pods-XYARKit.debug.xcconfig"; sourceTree = "<group>"; };
 		F8EED016DC3EC7B55B7EFD81 /* Pods-XYARKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XYARKit.release.xcconfig"; path = "Target Support Files/Pods-XYARKit/Pods-XYARKit.release.xcconfig"; sourceTree = "<group>"; };
@@ -103,6 +111,10 @@
 				CE09EF6127FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift */,
 				CE09EF5B27FDA3850096104E /* VirtualObject.swift */,
 				CE09EF5F27FDB6040096104E /* ARUtilities.swift */,
+				CEAA6A4A281B8F1A0044B31C /* CameraButtonView.swift */,
+				CEAA6A4C281B913C0044B31C /* ARResultController.swift */,
+				CEAA85D4281BA6790044B31C /* ARUtil.swift */,
+				CEAA85D8281BC4680044B31C /* XYARModule.bundle */,
 				CE09EF6327FE8F4A0096104E /* Models.scnassets */,
 				CE09EF4827FD9D370096104E /* Main.storyboard */,
 				CE09EF4B27FD9D390096104E /* Assets.xcassets */,
@@ -172,6 +184,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEAA85D9281BC4680044B31C /* XYARModule.bundle in Resources */,
 				CE09EF4F27FD9D390096104E /* LaunchScreen.storyboard in Resources */,
 				CE09EF6427FE8F4A0096104E /* Models.scnassets in Resources */,
 				CE09EF4C27FD9D390096104E /* Assets.xcassets in Resources */,
@@ -231,8 +244,11 @@
 				CE09EF5A27FDA36E0096104E /* ARView.swift in Sources */,
 				CE09EF4727FD9D370096104E /* ViewController.swift in Sources */,
 				CE09EF6027FDB6040096104E /* ARUtilities.swift in Sources */,
+				CEAA6A4D281B913C0044B31C /* ARResultController.swift in Sources */,
+				CEAA85D5281BA6790044B31C /* ARUtil.swift in Sources */,
 				CE09EF5C27FDA3850096104E /* VirtualObject.swift in Sources */,
 				CE09EF4327FD9D370096104E /* AppDelegate.swift in Sources */,
+				CEAA6A4B281B8F1B0044B31C /* CameraButtonView.swift in Sources */,
 				CE09EF4527FD9D370096104E /* SceneDelegate.swift in Sources */,
 				CEE38FA128068A3D00BAA8A1 /* ARSceneController+RecordAR.swift in Sources */,
 				CE09EF6227FE8CE40096104E /* ARSceneController+ARCoachingOverlay.swift in Sources */,
