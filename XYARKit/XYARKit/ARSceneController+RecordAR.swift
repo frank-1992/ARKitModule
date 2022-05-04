@@ -118,7 +118,6 @@ extension ARSceneController: CameraButtonViewDelegate {
         do {
             let videoRecording = try sceneView.startVideoRecording()
             videoRecording.$duration.observe(on: .main) { [weak self] duration in
-                print(duration)
                 if duration < Capture.limitedTime {
                     self?.cameraTabView.timeLabel.text = String(format: "%.1f", duration)
                 } else {
@@ -150,7 +149,16 @@ extension ARSceneController: CameraButtonViewDelegate {
     }
     
     func takePhoto() {
-        
+        sceneView.takePhotoResult { [weak self] (result: Result<UIImage, Swift.Error>) in
+            switch result {
+            case .success(let image):
+                let controller = ARResultController(mediaType: .image(image))
+                controller.modalPresentationStyle = .overFullScreen
+                self?.present(controller, animated: true)
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }
 

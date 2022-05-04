@@ -135,14 +135,10 @@ public final class VirtualObject: SCNReferenceNode {
     // MARK: - horizontal shadow settings
     private func setupHorizontalShadows() {
         guard horizontalShadowPlaneNode == nil else { return }
-        let value1: CGFloat = CGFloat(self.boundingBox.max.x - self.boundingBox.min.x)
-        let value2: CGFloat = CGFloat(self.boundingBox.max.z - self.boundingBox.min.z)
-        let value3: CGFloat = CGFloat(self.boundingBox.max.z - self.boundingBox.min.x)
-        let value4: CGFloat = CGFloat(self.boundingBox.max.x - self.boundingBox.min.z)
+        let width: CGFloat = CGFloat(self.boundingBox.max.x - self.boundingBox.min.x)
+        let length: CGFloat = CGFloat(self.boundingBox.max.z - self.boundingBox.min.z)
         
-        let min = VirtualObject.maxOne([value1, value2, value3, value4])
-        let edge = sqrt(min * min * 2)
-        let plane = SCNPlane(width: edge, height: edge)
+        let plane = SCNPlane(width: width, height: length)
         plane.firstMaterial?.diffuse.contents = UIColor.red
         plane.firstMaterial?.lightingModel = .shadowOnly
         
@@ -163,9 +159,8 @@ public final class VirtualObject: SCNReferenceNode {
         guard verticalShadowPlaneNode == nil else { return }
         let height = CGFloat(self.boundingBox.max.y - self.boundingBox.min.y)
         let width = CGFloat(self.boundingBox.max.x - self.boundingBox.min.x)
-        let length = sqrt(height * height + width * width)
         
-        let plane = SCNPlane(width: length, height: length)
+        let plane = SCNPlane(width: width, height: height)
         plane.firstMaterial?.diffuse.contents = UIColor.red
         plane.firstMaterial?.lightingModel = .shadowOnly
 
